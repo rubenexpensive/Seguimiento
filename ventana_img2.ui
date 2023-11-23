@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1502</width>
+    <height>900</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>511</width>
-    <height>511</height>
+    <width>1500</width>
+    <height>900</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -22,10 +22,10 @@
   <widget class="QWidget" name="widget" native="true">
    <property name="geometry">
     <rect>
-     <x>-10</x>
+     <x>-20</x>
      <y>0</y>
-     <width>811</width>
-     <height>601</height>
+     <width>1511</width>
+     <height>1101</height>
     </rect>
    </property>
    <property name="minimumSize">
@@ -40,10 +40,10 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>26</x>
-      <y>23</y>
-      <width>721</width>
-      <height>491</height>
+      <x>110</x>
+      <y>80</y>
+      <width>921</width>
+      <height>691</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -56,10 +56,10 @@
    <widget class="QSlider" name="verticalSlider">
     <property name="geometry">
      <rect>
-      <x>770</x>
-      <y>30</y>
-      <width>20</width>
-      <height>481</height>
+      <x>1290</x>
+      <y>80</y>
+      <width>91</width>
+      <height>721</height>
      </rect>
     </property>
     <property name="orientation">
@@ -69,10 +69,10 @@
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>520</y>
-      <width>371</width>
-      <height>51</height>
+      <x>110</x>
+      <y>800</y>
+      <width>881</width>
+      <height>61</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -98,15 +98,60 @@
    <widget class="QPushButton" name="close">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>540</y>
-      <width>171</width>
-      <height>41</height>
+      <x>1270</x>
+      <y>810</y>
+      <width>201</width>
+      <height>61</height>
      </rect>
     </property>
     <property name="text">
      <string>Salir</string>
     </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>780</y>
+      <width>331</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Nombre del archivo</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>1090</x>
+      <y>89</y>
+      <width>160</width>
+      <height>481</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(198, 190, 213);</string>
+       </property>
+       <property name="text">
+        <string>DATOS</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="datos">
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(229, 228, 230);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
  </widget>
