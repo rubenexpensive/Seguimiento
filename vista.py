@@ -34,7 +34,7 @@ class Ventanainicio(QMainWindow):
             self.newWindow = Vista()
             self.newWindow.setCoordinador(self.__coordinador)
             self.newWindow.show()
-
+    
         else:
             QMessageBox.warning(self, "Error de inicio de sesión", "Usuario o contraseña incorrectos.")
     
@@ -78,26 +78,33 @@ class Vista(QDialog):
                 QMessageBox.warning(self, "Error de Permiso", f"No tienes permisos para acceder a esta carpeta: {str(e)}")
 
     def mostrar_imagen_seleccionada(self):
-        current_index = self.verticalSlider.value()
-        if 0 <= current_index < self.comboBox.count():
-            imagen = self.comboBox.itemText(current_index)
+        try:
+            current_index = self.verticalSlider.value()
+            if 0 <= current_index < self.comboBox.count():
+                imagen = self.comboBox.itemText(current_index)
+                self.__coordinador2.img_conextion(imagen)
+                pixmap = QPixmap("temp_image.png").scaled(self.label.size(), Qt.KeepAspectRatio)
+                self.label.setPixmap(pixmap)
+                os.remove("temp_image.png")
+        except:
+            QMessageBox.warning(self, "Error de Permiso", f"No se pude abrir la carpeta")
+
+
+    def cargar(self):
+        try:
+            imagen = self.comboBox.currentText()
             self.__coordinador2.img_conextion(imagen)
             pixmap = QPixmap("temp_image.png").scaled(self.label.size(), Qt.KeepAspectRatio)
             self.label.setPixmap(pixmap)
+            info_paciente = self.__coordinador2.infomartion(imagen)
+            texto = f"Nombre: {info_paciente.get('Nombre', '')}\nID: {info_paciente.get('ID', '')}\nFecha: {info_paciente.get('Fecha de Nacimiento', '')}\nSexo: {info_paciente.get('Sexo', '')}"
+            current_index = self.comboBox.currentIndex()
+            self.verticalSlider.setValue(current_index)
+            self.datos.setText(texto)
             os.remove("temp_image.png")
-
-    def cargar(self):
-        imagen = self.comboBox.currentText()
-        self.__coordinador2.img_conextion(imagen)
-        pixmap = QPixmap("temp_image.png").scaled(self.label.size(), Qt.KeepAspectRatio)
-        self.label.setPixmap(pixmap)
-        info_paciente = self.__coordinador2.infomartion(imagen)
-        texto = f"Nombre: {info_paciente.get('Nombre', '')}\nID: {info_paciente.get('ID', '')}\nFecha: {info_paciente.get('Fecha de Nacimiento', '')}\nSexo: {info_paciente.get('Sexo', '')}"
-        print(texto)
-        current_index = self.comboBox.currentIndex()
-        self.verticalSlider.setValue(current_index)
-        self.datos.setText(texto)
-        os.remove("temp_image.png")
+        
+        except:
+            QMessageBox.warning(self, "Error de Permiso", f"No se pude abrir la carpeta")
 
     def sliderValueChanged(self, value):
         self.comboBox.setCurrentIndex(value)

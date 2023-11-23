@@ -12,6 +12,7 @@ class Coordinador(object):
         return self.__mi_modelo.validaruser(l,p)
     
     def img_conextion(self, imagen):
+        
         self.__mi_modelo.picture_creator(imagen)
     
     def get_file(self,filename):

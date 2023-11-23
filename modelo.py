@@ -5,7 +5,7 @@ import os
 class basededatos(QObject):
     def __init__(self):
         super().__init__()
-        self.__login = 'medicoAnalitico' 
+        self.__login = 'medicoAnalitico' #loging 
         self.__password = 'bio12345' 
         self.__carpeta = ""
 
