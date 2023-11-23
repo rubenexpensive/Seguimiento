@@ -118,3 +118,4 @@ class Vista(QDialog):
         self.lastWindow.show()
 
 
+ 
