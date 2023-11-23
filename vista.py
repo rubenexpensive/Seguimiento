@@ -1,13 +1,10 @@
 import sys
 import os
-from modelo import basededatos
-from PyQt5.QtWidgets import QApplication,QMainWindow, QDialog,QMessageBox, QFileDialog, QSlider
-from PyQt5.QtGui import QDoubleValidator, QRegExpValidator,QIntValidator
+from PyQt5.QtWidgets import QApplication,QMainWindow, QDialog,QMessageBox, QFileDialog, QLineEdit
+from PyQt5.QtGui import  QRegExpValidator
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt,QRegExp
 from PyQt5.uic import loadUi
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
 
 
 class Ventanainicio(QMainWindow):
@@ -19,7 +16,9 @@ class Ventanainicio(QMainWindow):
     def setup(self):
         self.campo_user.setValidator(QRegExpValidator(QRegExp("[a-zA-Z ]+")))
         self.campo_password.setValidator(QRegExpValidator(QRegExp("[a-zA-Z0-9 ]+")))
-        self.ingresar.clicked.connect(self.validardatos)
+        self.campo_password.setEchoMode(QLineEdit.Password)
+        self.buttonBox.accepted.connect(self.validardatos) 
+        self.buttonBox.rejected.connect(self.closeOption)
 
     def setCoordinador(self,c):
         self.__coordinador = c
@@ -32,64 +31,72 @@ class Ventanainicio(QMainWindow):
         if verificar:
             
             self.hide()
-            nueva_ventana = Vista()
-            nueva_ventana.show()
+            self.newWindow = Vista()
+            self.newWindow.setCoordinador(self.__coordinador)
+            self.newWindow.show()
 
         else:
             QMessageBox.warning(self, "Error de inicio de sesión", "Usuario o contraseña incorrectos.")
     
-
-
-# class MyGraphCanvas(FigureCanvas):
-#     def __init__(self, parent= None,width=5, height=4, dpi=100):
-        
-#         self.fig = Figure(figsize=(width, height), dpi=dpi)
-#         self.axes = self.fig.add_subplot(111)        
-#         FigureCanvas.__init__(self,self.fig)
-    
-#     def graficar_imagen(self, datos):
-#         self.axes.clear()
-#         self.axes.imshow(datos)
-#         self.axes.figure.canvas.draw()
-
-class Vista(QMainWindow):
+    def closeOption(self):
+        self.close()
+class Vista(QDialog):
     def __init__(self):
         super().__init__()
-        loadUi('ventana_img.ui', self)
+        loadUi("ventana_img2.ui", self)
         self.setup()
-    
+
     def setup(self):
-        self.comboBox.currentIndexChanged.connect(self.load)
         self.abrir.clicked.connect(self.load)
-        self.carpeta = 'imagenes'
-        lista_archivos = os.listdir(self.carpeta)   
-        # self.verticalSlider = QSlider(self)
-        # self.verticalSlider.valueChanged.connect(self.load)
-        # self.current_index = self.slider.value() - 1
-        # for archivo in lista_archivos:
-        #     self.comboBox.addItem(archivo)
+        self.close.clicked.connect(self.closeWindow)
+        self.comboBox.currentIndexChanged.connect(self.cargar)
 
-    def setCoordinador(self,c):
+        self.verticalSlider.valueChanged.connect(self.sliderValueChanged)
+        self.verticalSlider.setMinimum(0)
+        self.verticalSlider.setSingleStep(1)
+        self.verticalSlider.setValue(0)
+
+    def setCoordinador(self, c):
         self.__coordinador2 = c
-    
+
     def load(self):
-        archivo_cargado, _ = QFileDialog.getOpenFileName(self, "Abrir señal", "", "Todos los archivos (*);;Archivos mat (*.dcm)")
-        if archivo_cargado != '':
-            imagen = self.comboBox.currentText()
-            imagen_cargada = self._Vista__coordinador2.img_conextion(imagen)
+        if self.sender() == self.abrir:
+            carpeta = QFileDialog.getExistingDirectory(self, "Abrir carpeta", "", options=QFileDialog.ShowDirsOnly)
+            if carpeta:
+                self.__coordinador2.get_file(carpeta)
+                lista_archivos = [archivo for archivo in os.listdir(carpeta) if archivo.lower().endswith(".dcm")]
+                self.comboBox.clear()
+                self.comboBox.addItems(lista_archivos)
+                self.verticalSlider.setMaximum(len(lista_archivos) - 1)
 
-            # Update the slider's maximum value
-            self.verticalSlider.setMaximum(len(os.listdir(self.carpeta)))
+                if lista_archivos:
+                    imagen = self.comboBox.currentText()
+                    self.__coordinador2.img_conextion(imagen)
+                    self.mostrar_imagen_seleccionada()
 
-            # Display the selected image
-            pixmap = QPixmap("temp_image.png")
-            pixmap.fromImage(imagen_cargada)
-            pixmap = pixmap.scaledToWidth(self.img.width())
-            self.img.setPixmap(pixmap)
-            os.remove('temp_image.png')
+    def mostrar_imagen_seleccionada(self):
+        current_index = self.verticalSlider.value()
+        if 0 <= current_index < self.comboBox.count():
+            imagen = self.comboBox.itemText(current_index)
+            self.__coordinador2.img_conextion(imagen)
+            pixmap = QPixmap("temp_image.png").scaled(self.label.size(), Qt.KeepAspectRatio)
+            self.label.setPixmap(pixmap)
+            os.remove("temp_image.png")
 
-            # Update the slider's value based on the selected image index
-            image_index = os.listdir(self.carpeta).index(imagen)
-            self.verticalSlider.setValue(image_index + 1)
-        else:
-            QMessageBox.warning(self, "No exites el archivo")
+    def cargar(self):
+        imagen = self.comboBox.currentText()
+        self.__coordinador2.img_conextion(imagen)
+        pixmap = QPixmap("temp_image.png")
+        self.label.setPixmap(pixmap)
+        os.remove("temp_image.png")
+
+    def sliderValueChanged(self, value):
+        self.comboBox.setCurrentIndex(value)
+
+    def closeWindow(self):
+        self.hide()
+        self.lastWindow = Ventanainicio()
+        self.lastWindow.setCoordinador(self.__coordinador2)
+        self.lastWindow.show()
+
+
